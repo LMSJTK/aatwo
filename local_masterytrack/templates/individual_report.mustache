@@ -1,0 +1,132 @@
+{{!
+    Individual mastery track progress report
+}}
+<div class="local-masterytrack-individual-report">
+    <h2>{{username}}'s Progress in {{programname}}</h2>
+
+    {{#error}}
+        <div class="alert alert-danger">{{error}}</div>
+    {{/error}}
+
+    {{^error}}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>Overall Progress</h3>
+                        <div class="progress mb-3" style="height: 30px;">
+                            <div class="progress-bar" role="progressbar" style="width: {{percentcomplete}}%;"
+                                 aria-valuenow="{{percentcomplete}}" aria-valuemin="0" aria-valuemax="100">
+                                {{percentcomplete}}%
+                            </div>
+                        </div>
+                        <p><strong>Points Earned:</strong> {{totalpoints}} / {{masterygoal}}</p>
+                        <p><strong>Current Path:</strong>
+                            <span class="badge badge-info">{{currentpath}}</span>
+                        </p>
+                        {{#masteryachieved}}
+                            <div class="alert alert-success">
+                                <strong>Mastery Achieved!</strong><br>
+                                Date: {{masterydate}}
+                            </div>
+                        {{/masteryachieved}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>Progress by Topic</h3>
+                        <ul class="list-unstyled">
+                            {{#topics}}
+                                <li class="mb-2">
+                                    <strong>{{name}}:</strong> {{points}} points
+                                </li>
+                            {{/topics}}
+                            {{^topics}}
+                                <p class="text-muted">No topic progress yet</p>
+                            {{/topics}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>Progress by Tactic</h3>
+                        <ul class="list-unstyled">
+                            {{#tactics}}
+                                <li class="mb-2">
+                                    <strong>{{name}}:</strong> {{points}} points
+                                </li>
+                            {{/tactics}}
+                            {{^tactics}}
+                                <p class="text-muted">No tactic progress yet</p>
+                            {{/tactics}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>Assigned Courses</h3>
+                        <ul class="list-group">
+                            {{#assignedcourses}}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <a href="{{url}}">{{name}}</a>
+                                        <br><small class="text-muted">DOK {{doklevel}} - {{points}} points</small>
+                                    </div>
+                                    {{#completed}}
+                                        <span class="badge badge-success">Completed</span>
+                                    {{/completed}}
+                                </li>
+                            {{/assignedcourses}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>Completed Courses</h3>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Course</th>
+                                    <th>Points</th>
+                                    <th>Grade</th>
+                                    <th>Completed</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#completedcourses}}
+                                    <tr>
+                                        <td>{{name}}</td>
+                                        <td>{{points}}</td>
+                                        <td>{{grade}}%</td>
+                                        <td>{{date}}</td>
+                                    </tr>
+                                {{/completedcourses}}
+                                {{^completedcourses}}
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted">No courses completed yet</td>
+                                    </tr>
+                                {{/completedcourses}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {{/error}}
+</div>

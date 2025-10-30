@@ -1,0 +1,164 @@
+{{!
+    Group trends and statistics report
+}}
+<div class="local-masterytrack-group-trends">
+    <h2>Group Trends: {{programname}}</h2>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h4>{{totalusers}}</h4>
+                    <p class="text-muted">Total Users</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h4>{{mastered}}</h4>
+                    <p class="text-muted">Mastery Achieved</p>
+                    <small class="text-success">{{masteryrate}}%</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h4>{{avgpoints}}</h4>
+                    <p class="text-muted">Average Points</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h4>{{minpoints}} - {{maxpoints}}</h4>
+                    <p class="text-muted">Point Range</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h3>Progress Distribution</h3>
+                    <canvas id="progressChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h3>Path Distribution</h3>
+                    <ul class="list-group">
+                        {{#pathdistribution}}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{path}}
+                                <span class="badge badge-primary badge-pill">
+                                    {{count}} ({{percentage}}%)
+                                </span>
+                            </li>
+                        {{/pathdistribution}}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h3>Topic Performance</h3>
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Topic</th>
+                                <th>Users</th>
+                                <th>Avg Points</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#topicstats}}
+                                <tr>
+                                    <td>{{name}}</td>
+                                    <td>{{usercount}}</td>
+                                    <td>{{avgpoints}}</td>
+                                </tr>
+                            {{/topicstats}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h3>Leaderboard</h3>
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Name</th>
+                                <th>Points</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#leaderboard}}
+                                <tr>
+                                    <td>{{rank}}</td>
+                                    <td>{{name}}</td>
+                                    <td><strong>{{points}}</strong></td>
+                                </tr>
+                            {{/leaderboard}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+require(['jquery', 'core/chartjs'], function($, Chart) {
+    var chartData = {{{chartdata}}};
+    var ctx = document.getElementById('progressChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: chartData.labels,
+            datasets: [{
+                label: 'Number of Users',
+                data: chartData.data,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+});
+</script>
