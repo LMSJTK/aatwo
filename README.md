@@ -54,7 +54,15 @@ Three powerful AI-assisted features:
 ### LLM Settings
 Navigate to: **Site Administration > Plugins > Local plugins > Mastery Track Program**
 
-- **LLM Endpoint**: Your LLM API endpoint URL (e.g., OpenAI, Claude, local model)
+- **LLM Provider**: Select your provider (OpenAI, Anthropic, or Custom)
+- **LLM Endpoint**: Full API endpoint URL
+  - OpenAI: `https://api.openai.com/v1/chat/completions`
+  - Anthropic: `https://api.anthropic.com/v1/messages`
+  - Custom: Your own endpoint
+- **LLM Model**: Model name to use
+  - OpenAI: `gpt-4`, `gpt-3.5-turbo`, `gpt-4-turbo`
+  - Anthropic: `claude-3-opus-20240229`, `claude-3-sonnet-20240229`, `claude-3-haiku-20240307`
+  - Custom: Your model identifier
 - **LLM API Key**: Authentication key for the LLM service
 
 ### Scheduled Tasks

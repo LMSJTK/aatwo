@@ -57,8 +57,14 @@ $string['notstarted'] = 'Not Started';
 
 // LLM Integration
 $string['llmsettings'] = 'LLM Settings';
-$string['llmapikey'] = 'LLM API Key';
+$string['llmprovider'] = 'LLM Provider';
+$string['llmprovider_desc'] = 'Select your LLM provider to format API requests correctly';
 $string['llmendpoint'] = 'LLM Endpoint';
+$string['llmendpoint_desc'] = 'Full API endpoint URL (e.g., https://api.openai.com/v1/chat/completions or https://api.anthropic.com/v1/messages)';
+$string['llmmodel'] = 'LLM Model';
+$string['llmmodel_desc'] = 'Model name (e.g., gpt-4, gpt-3.5-turbo, claude-3-sonnet-20240229, claude-3-opus-20240229)';
+$string['llmapikey'] = 'LLM API Key';
+$string['llmapikey_desc'] = 'Your API key for authentication';
 $string['tagcourses'] = 'Tag Courses with Topics';
 $string['generatepaths'] = 'Generate Learning Paths';
 $string['generateemails'] = 'Generate Email Content';
