@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/masterytrack/db" VERSION="20251030" COMMENT="XMLDB file for Moodle local/masterytrack">
+  <TABLES>
+    <!-- Mastery Track Programs -->
+    <TABLE NAME="local_masterytrack_programs" COMMENT="Mastery track programs">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false"/>
+        <FIELD NAME="cohortid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="startdate" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="enddate" TYPE="int" LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="masterygoal" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="27"/>
+        <FIELD NAME="active" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="cohortid" TYPE="foreign" FIELDS="cohortid" REFTABLE="cohort" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+
+    <!-- Program Topics -->
+    <TABLE NAME="local_masterytrack_topics" COMMENT="Topics covered in programs">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false"/>
+        <FIELD NAME="category" TYPE="char" LENGTH="50" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+
+    <!-- Program Tactics -->
+    <TABLE NAME="local_masterytrack_tactics" COMMENT="Tactics/techniques covered">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+
+    <!-- Course Mappings -->
+    <TABLE NAME="local_masterytrack_courses" COMMENT="Courses in mastery programs">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="programid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="doklevel" TYPE="int" LENGTH="1" NOTNULL="true"/>
+        <FIELD NAME="points" TYPE="int" LENGTH="2" NOTNULL="true"/>
+        <FIELD NAME="sequenceorder" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="pathtype" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="standard"/>
+        <FIELD NAME="prerequisitescore" TYPE="int" LENGTH="3" NOTNULL="false"/>
+        <FIELD NAME="topicid" TYPE="int" LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="tacticid" TYPE="int" LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="programid" TYPE="foreign" FIELDS="programid" REFTABLE="local_masterytrack_programs" REFFIELDS="id"/>
+        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id"/>
+        <KEY NAME="topicid" TYPE="foreign" FIELDS="topicid" REFTABLE="local_masterytrack_topics" REFFIELDS="id"/>
+        <KEY NAME="tacticid" TYPE="foreign" FIELDS="tacticid" REFTABLE="local_masterytrack_tactics" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="programcourse" UNIQUE="false" FIELDS="programid, courseid"/>
+      </INDEXES>
+    </TABLE>
+
+    <!-- User Progress -->
+    <TABLE NAME="local_masterytrack_progress" COMMENT="User progress in programs">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="programid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="totalpoints" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="masteryachieved" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="masterydate" TYPE="int" LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="currentpathtype" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="standard"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="programid" TYPE="foreign" FIELDS="programid" REFTABLE="local_masterytrack_programs" REFFIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="programuser" UNIQUE="true" FIELDS="programid, userid"/>
+      </INDEXES>
+    </TABLE>
+
+    <!-- Course Completions/Points -->
+    <TABLE NAME="local_masterytrack_user_points" COMMENT="Points earned by users">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="progressid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="topicid" TYPE="int" LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="tacticid" TYPE="int" LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="pointsearned" TYPE="int" LENGTH="2" NOTNULL="true"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="false"/>
+        <FIELD NAME="completed" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="timecompleted" TYPE="int" LENGTH="10" NOTNULL="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="progressid" TYPE="foreign" FIELDS="progressid" REFTABLE="local_masterytrack_progress" REFFIELDS="id"/>
+        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="progresscourse" UNIQUE="false" FIELDS="progressid, courseid"/>
+      </INDEXES>
+    </TABLE>
+
+    <!-- Email Schedule -->
+    <TABLE NAME="local_masterytrack_emails" COMMENT="Email schedule and templates">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="programid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="dayoffset" TYPE="int" LENGTH="5" NOTNULL="true"/>
+        <FIELD NAME="subject" TYPE="char" LENGTH="255" NOTNULL="true"/>
+        <FIELD NAME="body" TYPE="text" NOTNULL="true"/>
+        <FIELD NAME="phishingexample" TYPE="text" NOTNULL="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="topicid" TYPE="int" LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="active" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="programid" TYPE="foreign" FIELDS="programid" REFTABLE="local_masterytrack_programs" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="programday" UNIQUE="false" FIELDS="programid, dayoffset"/>
+      </INDEXES>
+    </TABLE>
+
+    <!-- Email Send Log -->
+    <TABLE NAME="local_masterytrack_email_log" COMMENT="Email sending log">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="emailid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="programid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="sent" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="timesent" TYPE="int" LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="error" TYPE="text" NOTNULL="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="emailid" TYPE="foreign" FIELDS="emailid" REFTABLE="local_masterytrack_emails" REFFIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="emailuser" UNIQUE="false" FIELDS="emailid, userid"/>
+      </INDEXES>
+    </TABLE>
+
+    <!-- Course Tags (LLM Generated) -->
+    <TABLE NAME="local_masterytrack_course_tags" COMMENT="LLM-generated course tags">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="topicid" TYPE="int" LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="tacticid" TYPE="int" LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="doklevel" TYPE="int" LENGTH="1" NOTNULL="false"/>
+        <FIELD NAME="suggestedpoints" TYPE="int" LENGTH="2" NOTNULL="false"/>
+        <FIELD NAME="confidence" TYPE="number" LENGTH="5" DECIMALS="2" NOTNULL="false"/>
+        <FIELD NAME="llmmetadata" TYPE="text" NOTNULL="false"/>
+        <FIELD NAME="approved" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+
+  </TABLES>
+</XMLDB>
