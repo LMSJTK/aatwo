@@ -21,11 +21,23 @@ class llm_manager {
     private $apikey;
 
     /**
+     * LLM provider
+     */
+    private $provider;
+
+    /**
+     * LLM model
+     */
+    private $model;
+
+    /**
      * Constructor
      */
     public function __construct() {
         $this->apiendpoint = get_config('local_masterytrack', 'llm_endpoint');
         $this->apikey = get_config('local_masterytrack', 'llm_apikey');
+        $this->provider = get_config('local_masterytrack', 'llm_provider') ?: 'openai';
+        $this->model = get_config('local_masterytrack', 'llm_model') ?: 'gpt-4';
     }
 
     /**
@@ -255,36 +267,130 @@ class llm_manager {
             ];
         }
 
-        $data = [
-            'prompt' => $prompt,
-            'max_tokens' => $options['max_tokens'] ?? 1000,
-            'temperature' => $options['temperature'] ?? 0.7
-        ];
+        // Format request based on provider
+        $data = $this->format_request($prompt, $options);
+        $headers = $this->get_headers();
 
         $ch = curl_init($this->apiendpoint);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-            'Authorization: Bearer ' . $this->apikey
-        ]);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
         $response = curl_exec($ch);
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
         if ($httpcode == 200) {
-            $result = json_decode($response, true);
             return [
                 'success' => true,
-                'content' => $result['response'] ?? $result['content'] ?? $response
+                'content' => $this->parse_response($response)
             ];
         } else {
             return [
                 'success' => false,
                 'error' => "HTTP {$httpcode}: {$response}"
             ];
+        }
+    }
+
+    /**
+     * Format request based on provider
+     *
+     * @param string $prompt Prompt text
+     * @param array $options Additional options
+     * @return array Formatted request data
+     */
+    private function format_request($prompt, $options) {
+        $maxTokens = $options['max_tokens'] ?? 1000;
+        $temperature = $options['temperature'] ?? 0.7;
+
+        switch ($this->provider) {
+            case 'openai':
+                return [
+                    'model' => $this->model,
+                    'messages' => [
+                        ['role' => 'user', 'content' => $prompt]
+                    ],
+                    'max_tokens' => $maxTokens,
+                    'temperature' => $temperature
+                ];
+
+            case 'anthropic':
+                return [
+                    'model' => $this->model,
+                    'messages' => [
+                        ['role' => 'user', 'content' => $prompt]
+                    ],
+                    'max_tokens' => $maxTokens,
+                    'temperature' => $temperature
+                ];
+
+            case 'custom':
+            default:
+                // Generic format for custom providers
+                return [
+                    'model' => $this->model,
+                    'prompt' => $prompt,
+                    'max_tokens' => $maxTokens,
+                    'temperature' => $temperature
+                ];
+        }
+    }
+
+    /**
+     * Get headers for API request
+     *
+     * @return array Headers
+     */
+    private function get_headers() {
+        $headers = ['Content-Type: application/json'];
+
+        switch ($this->provider) {
+            case 'openai':
+                $headers[] = 'Authorization: Bearer ' . $this->apikey;
+                break;
+
+            case 'anthropic':
+                $headers[] = 'x-api-key: ' . $this->apikey;
+                $headers[] = 'anthropic-version: 2023-06-01';
+                break;
+
+            case 'custom':
+            default:
+                $headers[] = 'Authorization: Bearer ' . $this->apikey;
+                break;
+        }
+
+        return $headers;
+    }
+
+    /**
+     * Parse response from LLM
+     *
+     * @param string $response Raw response
+     * @return string Parsed content
+     */
+    private function parse_response($response) {
+        $result = json_decode($response, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return $response;
+        }
+
+        switch ($this->provider) {
+            case 'openai':
+                // OpenAI format: choices[0].message.content
+                return $result['choices'][0]['message']['content'] ?? $response;
+
+            case 'anthropic':
+                // Anthropic format: content[0].text
+                return $result['content'][0]['text'] ?? $response;
+
+            case 'custom':
+            default:
+                // Try common formats
+                return $result['response'] ?? $result['content'] ?? $result['text'] ?? $response;
         }
     }
 

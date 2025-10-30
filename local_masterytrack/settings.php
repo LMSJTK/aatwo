@@ -21,18 +21,38 @@ if ($hassiteconfig) {
         ''
     ));
 
+    $settings->add(new admin_setting_configselect(
+        'local_masterytrack/llm_provider',
+        get_string('llmprovider', 'local_masterytrack'),
+        get_string('llmprovider_desc', 'local_masterytrack'),
+        'openai',
+        [
+            'openai' => 'OpenAI (GPT-4, GPT-3.5)',
+            'anthropic' => 'Anthropic (Claude)',
+            'custom' => 'Custom/Other'
+        ]
+    ));
+
     $settings->add(new admin_setting_configtext(
         'local_masterytrack/llm_endpoint',
         get_string('llmendpoint', 'local_masterytrack'),
-        'LLM API endpoint URL',
+        get_string('llmendpoint_desc', 'local_masterytrack'),
         '',
         PARAM_URL
+    ));
+
+    $settings->add(new admin_setting_configtext(
+        'local_masterytrack/llm_model',
+        get_string('llmmodel', 'local_masterytrack'),
+        get_string('llmmodel_desc', 'local_masterytrack'),
+        'gpt-4',
+        PARAM_TEXT
     ));
 
     $settings->add(new admin_setting_configpasswordunmask(
         'local_masterytrack/llm_apikey',
         get_string('llmapikey', 'local_masterytrack'),
-        'LLM API key',
+        get_string('llmapikey_desc', 'local_masterytrack'),
         ''
     ));
 

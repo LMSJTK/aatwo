@@ -18,24 +18,25 @@ cp -r local_masterytrack /path/to/moodle/local/
 
 Navigate to: **Site Administration > Plugins > Local plugins > Mastery Track Program**
 
-Set:
-- **LLM Endpoint**: Your AI service endpoint (OpenAI, Claude, or custom)
-- **LLM API Key**: Your API key
+Configure the following settings:
 
-Example configurations:
-```
-OpenAI:
-- Endpoint: https://api.openai.com/v1/chat/completions
-- Model: gpt-4 or gpt-3.5-turbo
+**OpenAI Configuration:**
+- **LLM Provider**: OpenAI (GPT-4, GPT-3.5)
+- **LLM Endpoint**: `https://api.openai.com/v1/chat/completions`
+- **LLM Model**: `gpt-4`, `gpt-3.5-turbo`, or `gpt-4-turbo`
+- **LLM API Key**: Your OpenAI API key
 
-Claude (Anthropic):
-- Endpoint: https://api.anthropic.com/v1/messages
-- Model: claude-3-sonnet-20240229
+**Anthropic (Claude) Configuration:**
+- **LLM Provider**: Anthropic (Claude)
+- **LLM Endpoint**: `https://api.anthropic.com/v1/messages`
+- **LLM Model**: `claude-3-opus-20240229`, `claude-3-sonnet-20240229`, or `claude-3-haiku-20240307`
+- **LLM API Key**: Your Anthropic API key
 
-Custom/Local:
-- Endpoint: http://your-llm-server/api/generate
-- Any compatible LLM API
-```
+**Custom/Local Configuration:**
+- **LLM Provider**: Custom/Other
+- **LLM Endpoint**: Your endpoint URL (e.g., `http://localhost:8080/v1/chat/completions`)
+- **LLM Model**: Your model identifier
+- **LLM API Key**: Your API key (if required)
 
 ### 1.3 Enable Scheduled Tasks
 
